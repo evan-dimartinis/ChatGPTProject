@@ -1,7 +1,10 @@
-import React from "react";
-import '../styles/dashboard.css'
+import React, { useState } from "react";
+import EditLinkModal from "../components/editlinkmodal";
+import '../styles/dashboard.css';
 
 const Dashboard = (props) => {
+    const [isEditLinks, setIsEditLinks] = useState(false)
+
     return (
         <div className="dashboard-page-container">
             <div className="date-container">
@@ -27,8 +30,9 @@ const Dashboard = (props) => {
                         <a href="https://worldle.teuteuf.fr/" target="_blank">Worldle</a>
                     </div>
                 </div>
-                <button className="edit-link-btn">Edit</button>
+                <button className="edit-link-btn" onClick={() => setIsEditLinks(true)}>Edit</button>
             </div>
+            <EditLinkModal isOpen={isEditLinks} closeModal={() => setIsEditLinks(false)} />
         </div>
     )
 }
