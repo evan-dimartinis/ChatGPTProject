@@ -14,7 +14,7 @@ export default function Auth(props) {
   useEffect(() => {});
 
   const LogIn = async () => {
-    navigate("/dashboard", { replace: true });
+    dispatch(login)
   };
 
   return (
