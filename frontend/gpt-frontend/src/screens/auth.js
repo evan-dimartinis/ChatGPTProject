@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { login } from "../store/authSlice";
 import '../styles/auth.css'
 
 export default function Auth(props) {
@@ -13,8 +14,11 @@ export default function Auth(props) {
 
   useEffect(() => {});
 
-  const LogIn = async () => {
-    dispatch(login)
+  const LogInUser = async () => {
+    dispatch(login({
+      username: "evan",
+      password: "password"
+    }))
   };
 
   return (
@@ -48,7 +52,7 @@ export default function Auth(props) {
           />
           <label className="AuthFormLabel">Password</label>
         </div>
-        <button type="button" onClick={LogIn} className="LogInButton">
+        <button type="button" onClick={LogInUser} className="LogInButton">
           Log In
         </button>
       </div>
