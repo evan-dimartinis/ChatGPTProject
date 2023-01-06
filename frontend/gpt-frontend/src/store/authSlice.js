@@ -13,15 +13,13 @@ export const AuthSlice = createSlice({
   },
   extraReducers(builder) {
     builder.addCase(login.fulfilled, (state, action) => {
-      console.log('test good')
+      console.log("test good");
     });
   },
 });
 
-export const login = createAsyncThunk(
-  "Auth/login",
-  async (authdata) => {
-    console.log('in dispatch')
+export const login = createAsyncThunk("Auth/login", async (authdata) => {
+  try {
     const response = await fetch(`http://127.0.0.1:5000/login`, {
       method: "POST",
       mode: "no-cors",
@@ -30,8 +28,11 @@ export const login = createAsyncThunk(
       },
       body: JSON.stringify(authdata),
     });
+    console.log(response);
     const resdata = await response.json();
-    console.log(resdata)
+    console.log(resdata);
     return resdata;
+  } catch (err) {
+    console.log(err);
   }
-);
+});

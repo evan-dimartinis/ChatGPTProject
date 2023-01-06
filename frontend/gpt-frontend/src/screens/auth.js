@@ -16,8 +16,8 @@ export default function Auth(props) {
 
   const LogInUser = async () => {
     dispatch(login({
-      username: "evan",
-      password: "password"
+      username: username,
+      password: password
     }))
   };
 

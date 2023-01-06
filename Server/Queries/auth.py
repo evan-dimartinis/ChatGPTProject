@@ -2,16 +2,17 @@ import psycopg2
 import pytz
 from datetime import datetime
 import secrets
-import db
+from .dbsetup import DB
 import os
 
 class AuthDB():
     def __init__(self):
+        self.dbdetails = DB()
         self.conn = psycopg2.connect(
-                host=db.host,
-                database=db.database,
-                user=db.user,
-                password=db.password,
+                host=self.dbdetails.host,
+                database=self.dbdetails.database,
+                user=self.dbdetails.user,
+                password=self.dbdetails.dbpassword,
                 port=2000
             )
     
@@ -56,7 +57,6 @@ class AuthDB():
             cur.execute(sql, record)
             results = cur.fetchall()
             cur.close()
-            print(results)
             if len(results) < 1:
                 raise Exception('Username or password are incorrect. Please try again')
             else:
@@ -79,6 +79,3 @@ class AuthDB():
             cur.close()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-
-a = AuthDB()
-print(a.sign_up('ev', 'password'))
