@@ -22,4 +22,16 @@ class QuickLinks():
             return cur.fetchall()
         except any as err:
             print(err)
+
+    def insert_quicklink(self, userid, label, url):
+        sql = "INSERT INTO quicklinks (huser, slabel, surl, bremoved) values (%s, %s, %s, false)"
+        record = (userid, label, url)
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, record)
+            self.conn.commit()
+            return self.get_user_quicklinks(userid)
+        except any as err:
+            print(err)
+            return False
             

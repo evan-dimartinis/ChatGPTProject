@@ -24,7 +24,6 @@ def login_api():
 def autologin():
     try:
         token = request.headers.get('token')
-        print(token)
         userid = auth.AuthDB().get_userid_with_token(token)
         if userid > 0:
             return {"valid": True}, 200
@@ -41,6 +40,20 @@ def get_quicklinks():
             return {"error": "Invalid token"}, 401
         else:
             rv = quicklinks.QuickLinks().get_user_quicklinks(userid)
+            return {"data": rv}, 200
+    except any as err:
+        print(err)
+        return "Internal Server Error", 500
+
+@app.route('/addquicklink', methods=['POST'])
+def add_quicklink():
+    try:
+        token = request.headers.get('token')
+        userid = auth.AuthDB().get_userid_with_token(token)
+        rv = quicklinks.QuickLinks().insert_quicklink(userid, request.data.label, request.data.url)
+        if rv is False:
+            return "Internal Server Error", 500
+        else:
             return {"data": rv}, 200
     except any as err:
         print(err)
