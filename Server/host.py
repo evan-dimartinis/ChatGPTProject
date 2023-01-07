@@ -1,20 +1,26 @@
-from flask import Flask, request, jsonify, make_response
-from flask_restful import Resource, Api, reqparse
+from flask import Flask, request
+from flask_cors import CORS
 import json
 from Queries import auth
 
 app = Flask(__name__)
-api = Api(app)
+CORS(app)
 
 def to_json(byteobject):
     return json.loads(byteobject.decode(encoding='utf-8', errors='strict'))
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login_api():
     print(request.data)
-    return to_json(request.data), 200
+    result = {
+    'received_data': 'x',
+    'message': 'Success'
+    }
+    print('returning now')
+    return json.dumps(result)
 
-class Users(Resource):
+""" class Users(Resource):
     def get(self):
         print(request.body)
         return {'data': 'Evan'}, 200
@@ -35,7 +41,7 @@ class Users(Resource):
     
 class Locations(Resource):
     # methods go here
-    pass
+    pass """
     
 #api.add_resource(Users, '/login')  # '/users' is our entry point for Users
 #api.add_resource(Locations, '/locations')  # and '/locations' is our entry point for Locations
