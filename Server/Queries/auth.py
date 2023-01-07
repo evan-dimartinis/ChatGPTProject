@@ -1,9 +1,7 @@
 import psycopg2
-import pytz
 from datetime import datetime
 import secrets
-from .dbsetup import DB
-import os
+from Queries.dbsetup import DB
 
 class AuthDB():
     def __init__(self):
@@ -19,8 +17,6 @@ class AuthDB():
     def sign_up(self, username, password):
         sql = "SELECT hmy from gptuser where username = %s"
         record = (username,)
-        conn = None
-        token = ''
         try:
             cur = self.conn.cursor()
             cur.execute(sql, record)
@@ -52,22 +48,19 @@ class AuthDB():
         sql = "SELECT hmy, session_token, expiration_dt from gptuser where username = %s and password = %s"
         record = (username, password)
         token = ''
-        try:
-            cur = self.conn.cursor()
-            cur.execute(sql, record)
-            results = cur.fetchall()
-            cur.close()
-            if len(results) < 1:
-                raise Exception('Username or password are incorrect. Please try again')
-            else:
-                #REGARDLESS WE'RE UPDATING THE TOKEN AND EXPIRATION DATE
-                token = secrets.token_urlsafe()
-                self.update_user_token(results[0][0], token)
-                self.conn.close()
-                return token
-        except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-        return token
+        cur = self.conn.cursor()
+        cur.execute(sql, record)
+        results = cur.fetchall()
+        cur.close()
+        if len(results) < 1:
+            return ('Username or password are incorrect. Please try again', 202)
+        else:
+            #REGARDLESS WE'RE UPDATING THE TOKEN AND EXPIRATION DATE
+            token = secrets.token_urlsafe()
+            self.update_user_token(results[0][0], token)
+            self.conn.close()
+            print(token)
+            return (token, 200)
 
     def update_user_token(self, hmy, token):
         sql = "UPDATE gptuser set session_token = %s, expiration_dt = current_timestamp + interval '1 week' where hmy = %s"
@@ -77,5 +70,23 @@ class AuthDB():
             cur.execute(sql, record)
             self.conn.commit()
             cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def get_userid_with_token(self, token):
+        sql = "SELECT hmy from gptuser where session_token = %s"
+        record = (token,)
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, record)
+            results = cur.fetchall()
+            cur.close()
+            print(results)
+            if len(results) > 0:
+                self.update_user_token(results[0][0], token)
+                return results[0][0]
+            else:
+                return 0
+            
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)

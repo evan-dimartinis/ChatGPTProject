@@ -2,20 +2,37 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { login } from "../store/authSlice";
+import { autologin, login } from "../store/authSlice";
 import '../styles/auth.css'
 
 export default function Auth(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [cookie, setCookie, removeCookie] = useCookies(['session_token'])
+
+  const loginerror = useSelector((state) => state.Auth.loginerror)
+  const isAuthenticated = useSelector((state) => state.Auth.isAuthenticated)
+  const session_token = useSelector((state) => state.Auth.session_token)
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {});
+  useEffect(() => {
+    /* if (isAuthenticated && session_token !== '') {
+      setCookie('session_token', session_token, { path: '/' });
+      console.log(cookie.session_token)
+      navigate('/dashboard')
+    } */
+    if (cookie.session_token.data !== '') {
+      dispatch(autologin(cookie.session_token.data))
+    }
+    if (isAuthenticated) {
+      navigate('/dashboard')
+    }
+  }, [cookie.session_token.data]);
 
   const LogInUser = async () => {
-    dispatch(login({
+    await dispatch(login({
       username: username,
       password: password
     }))
@@ -37,7 +54,7 @@ export default function Auth(props) {
             required
             className="AuthFormInput"
           />
-          <label className="AuthFormLabel">Username</label>
+          <label className="AuthFormLabel username">Username</label>
         </div>
         <div className="AuthFormField">
           <input
@@ -51,6 +68,9 @@ export default function Auth(props) {
             className="AuthFormInput"
           />
           <label className="AuthFormLabel">Password</label>
+        </div>
+        <div className="errordiv">
+          {loginerror !== '' ? <p className="errormessage">{loginerror}</p> : null}
         </div>
         <button type="button" onClick={LogInUser} className="LogInButton">
           Log In

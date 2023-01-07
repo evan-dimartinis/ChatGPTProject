@@ -72,6 +72,11 @@ a:active {
   background-color: transparent;
   align-items: center;
   justify-content: flex-start;
+  overflow-x: scroll;
+}
+
+.link-bar-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 .link-element {

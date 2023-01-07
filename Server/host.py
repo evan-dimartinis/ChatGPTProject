@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 import json
-from Queries import auth
+from Queries import auth, quicklinks
 
 app = Flask(__name__)
 CORS(app)
@@ -10,41 +10,41 @@ def to_json(byteobject):
     return json.loads(byteobject.decode(encoding='utf-8', errors='strict'))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login_api():
-    print(request.data)
-    result = {
-    'received_data': 'x',
-    'message': 'Success'
-    }
-    print('returning now')
-    return json.dumps(result)
+    try:
+        postdata = to_json(request.data)
+        returnvalue = auth.AuthDB().log_in_user(postdata['username'], postdata['password'])
+        print(returnvalue)
+        return {"data": returnvalue[0]}, returnvalue[1]
+    except:
+        return "Internal Server Error", 500
 
-""" class Users(Resource):
-    def get(self):
-        print(request.body)
-        return {'data': 'Evan'}, 200
-    pass
+@app.route('/autologin', methods=['GET'])
+def autologin():
+    try:
+        token = request.headers.get('token')
+        print(token)
+        userid = auth.AuthDB().get_userid_with_token(token)
+        if userid > 0:
+            return {"valid": True}, 200
+        else:
+            return {"valid": False}, 200
+    except:
+        return "Internal Server Error", 500
 
-    def post(self):
-        x = to_json(request.data)
-        try:
-            x = auth.AuthDB().log_in_user(x['username'], x['password'])
-            data = {
-                "token": str(x)
-            }
-            return data, 200
-        except TypeError as err:
-            print(err)
-            return {"error": "Could not login user"}, 500
-    pass
-    
-class Locations(Resource):
-    # methods go here
-    pass """
-    
-#api.add_resource(Users, '/login')  # '/users' is our entry point for Users
-#api.add_resource(Locations, '/locations')  # and '/locations' is our entry point for Locations
+@app.route('/quicklinks', methods=['GET'])
+def get_quicklinks():
+    try:
+        userid = auth.AuthDB().get_userid_with_token()
+        if userid == 0:
+            return {"error": "Invalid token"}, 401
+        else:
+            rv = quicklinks.QuickLinks().get_user_quicklinks(userid)
+            return {"data": rv}, 200
+    except any as err:
+        print(err)
+        return "Internal Server Error", 500
 
 if __name__ == '__main__':
     app.run()
