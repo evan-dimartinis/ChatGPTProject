@@ -4,7 +4,7 @@ import json
 from Queries import auth, quicklinks
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 def to_json(byteobject):
     return json.loads(byteobject.decode(encoding='utf-8', errors='strict'))
@@ -25,6 +25,7 @@ def login_api():
 def autologin():
     try:
         token = request.headers.get('token')
+        print(token)
         userid = auth.AuthDB().get_userid_with_token(token)
         if userid > 0:
             print('sending back a valid autologin')
@@ -38,6 +39,7 @@ def autologin():
 def get_quicklinks():
     try:
         token = request.headers.get('token')
+        print(token)
         userid = auth.AuthDB().get_userid_with_token(token)
         if userid == 0:
             return {"error": "Invalid token"}, 401
@@ -53,7 +55,27 @@ def add_quicklink():
     try:
         token = request.headers.get('token')
         userid = auth.AuthDB().get_userid_with_token(token)
-        rv = quicklinks.QuickLinks().insert_quicklink(userid, request.data.label, request.data.url)
+        print(userid)
+        postdata = to_json(request.data)
+        print(postdata)
+        rv = quicklinks.QuickLinks().insert_quicklink(userid, postdata['label'], postdata['url'])
+        if rv is False:
+            return "Internal Server Error", 500
+        else:
+            return {"data": rv}, 200
+    except (TypeError, NameError, SyntaxError) as err:
+        print(err)
+        return "Internal Server Error", 500
+
+@app.route('/updatequicklink', methods=['POST'])
+def update_quicklink():
+    try:
+        token = request.headers.get('token')
+        userid = auth.AuthDB().get_userid_with_token(token)
+        print(userid)
+        postdata = to_json(request.data)
+        print(postdata)
+        rv = quicklinks.QuickLinks().update_quicklink(userid, postdata['hmy'], postdata['label'], postdata['url'])
         if rv is False:
             return "Internal Server Error", 500
         else:

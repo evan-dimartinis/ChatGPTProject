@@ -18,19 +18,19 @@ export default function Auth(props) {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    /* if (isAuthenticated && session_token !== '') {
-      setCookie('session_token', session_token, { path: '/' });
-      console.log(cookie.session_token)
-      navigate('/dashboard')
-    } */
     if (isAuthenticated) {
       setCookie("session_token", session_token, {
-        path: "/"
+        path: "/",
       });
       navigate("/dashboard");
     }
-    if (cookie.session_token.data !== "" && cookie.session_token.data !== undefined) {
-      dispatch(autologin(cookie.session_token.data));
+    if (cookie.session_token !== undefined) {
+      if (
+        cookie.session_token !== "" &&
+        cookie.session_token !== undefined
+      ) {
+        dispatch(autologin(cookie.session_token));
+      }
     }
   }, [dispatch, isAuthenticated]);
 

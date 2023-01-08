@@ -7,20 +7,23 @@ export const AuthSlice = createSlice({
     isAuthenticated: false,
     loginerror: "",
   },
-  reducers: {
-  },
+  reducers: {},
   extraReducers(builder) {
     builder
       .addCase(login.fulfilled, (state, action) => {
-        state.session_token = action.payload;
+        console.log("in login fulfilled: ", action.payload.data);
+        state.session_token = action.payload.data;
         state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.loginerror = action.payload;
       })
       .addCase(autologin.fulfilled, (state, action) => {
-        state.isAuthenticated = action.payload
-      })
+        if (action.payload.valid) {
+          state.session_token = action.payload.session_token;
+        }
+        state.isAuthenticated = action.payload.valid;
+      });
   },
 });
 
@@ -28,42 +31,39 @@ export const autologin = createAsyncThunk(
   "Auth/autologin",
   async (token, { rejectWithValue }) => {
     try {
+      console.log(token);
       const response = await fetch(`http://127.0.0.1:5000/autologin`, {
         method: "GET",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
-          'Access-Control-Allow-Origin': 'http://localhost:3000',
-          "token": token,
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+          token: token,
         },
-      })
-      const isValidUser = await response.json()
-      return isValidUser.valid
-    } catch (err) {
-      
-    }
+      });
+      const isValidUser = await response.json();
+      return { valid: isValidUser.valid, session_token: token };
+    } catch (err) {}
   }
-)
+);
 
 export const login = createAsyncThunk(
   "Auth/login",
   async (authdata, { rejectWithValue }) => {
     try {
-      console.log(
-        "IN LOGIN ACTION"
-      )
+      console.log("IN LOGIN ACTION");
       const response = await fetch(`http://127.0.0.1:5000/login`, {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
-          'Access-Control-Allow-Origin': 'http://localhost:3000'
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
         body: JSON.stringify(authdata),
       });
       const status = await response.status;
       const resdata = await response.json();
-      console.log("response from login: ", resdata)
+      console.log("response from login: ", resdata);
       if (status == 200) {
         return resdata;
       } else if (status == 202) {

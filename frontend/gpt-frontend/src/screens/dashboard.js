@@ -12,19 +12,17 @@ const Dashboard = (props) => {
   const [isEditLinks, setIsEditLinks] = useState(false);
   const [cookie, setCookie, removeCookie] = useCookies(["session_token"]);
   const isAuth = useSelector((state) => state.Auth.isAuthenticated);
-
-  /* 
-    SHOULD PROBABLY DO LIKE A USEEFFECT VERIFY SESSION TOKEN THING
-    ACTUALLY THAT SHOULD HAPPEN AUTOMATICALLY ON THE SERVER
-    IF SESSION TOKEN DOESN'T EXIST THEN REDIRECT BACK TO AUTH
-    */
+  const token = useSelector((state) => state.Auth.session_token);
+  const links = useSelector((state) => state.Quicklinks.quicklinks);
 
   useEffect(() => {
     if (!isAuth) {
       navigate("/");
+    } else {
+      dispatch(getQuicklinks(token));
     }
-    dispatch(getQuicklinks(cookie.session_token.data));
-  }, [cookie.session_token.data]);
+    
+  }, []);
 
   return (
     <div className="dashboard-page-container">
@@ -35,51 +33,21 @@ const Dashboard = (props) => {
       </div>
       <div className="link-bar">
         <div className="link-bar-scroll">
-          <div className="link-element">
-            <a
-              href="https://worldle.teuteuf.fr/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Worldle
-            </a>
-          </div>
-          <div className="link-element">
-            <a
-              href="https://worldle.teuteuf.fr/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Worldle
-            </a>
-          </div>
-          <div className="link-element">
-            <a
-              href="https://worldle.teuteuf.fr/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Worldle
-            </a>
-          </div>
-          <div className="link-element">
-            <a
-              href="https://worldle.teuteuf.fr/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Worldle
-            </a>
-          </div>
-          <div className="link-element">
-            <a
-              href="https://worldle.teuteuf.fr/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Worldle
-            </a>
-          </div>
+          {links !== undefined && links.length > 0
+            ? links.map((item) => {
+                return (
+                  <div key={item.hmy} className="link-element">
+                    <a
+                      href={item.url}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {item.label}
+                    </a>
+                  </div>
+                );
+              })
+            : null}
         </div>
         <button className="edit-link-btn" onClick={() => setIsEditLinks(true)}>
           Edit

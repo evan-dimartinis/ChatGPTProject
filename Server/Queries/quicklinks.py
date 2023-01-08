@@ -14,7 +14,7 @@ class QuickLinks():
             )
 
     def get_user_quicklinks(self, userid):
-        sql = "SELECT hmy, slabel, surl FROM quicklinks where bremoved = false and huser = %s"
+        sql = "SELECT hmy, slabel, surl FROM quicklinks where bremoved = false and huser = %s ORDER BY hmy"
         record = (userid,)
         try:
             cur = self.conn.cursor()
@@ -35,3 +35,13 @@ class QuickLinks():
             print(err)
             return False
             
+    def update_quicklink(self, userid, hmy, label, url):
+        sql = "UPDATE quicklinks set slabel = %s, surl = %s where hmy = %s"
+        record = (label, url, hmy)
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, record)
+            self.conn.commit()
+            return self.get_user_quicklinks(userid)
+        except:
+            return False

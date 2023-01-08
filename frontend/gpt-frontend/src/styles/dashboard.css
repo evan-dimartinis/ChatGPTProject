@@ -87,6 +87,7 @@ a:active {
   background: rgb(103, 118, 214);
   height: 75%;
   min-width: 200px;
+  max-width: 300px;
   float: left;
   width: 100%;
   border-radius: 10px;
