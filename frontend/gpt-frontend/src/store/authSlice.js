@@ -33,7 +33,8 @@ export const autologin = createAsyncThunk(
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
-          "token": token
+          'Access-Control-Allow-Origin': 'http://localhost:3000',
+          "token": token,
         },
       })
       const isValidUser = await response.json()
@@ -48,18 +49,22 @@ export const login = createAsyncThunk(
   "Auth/login",
   async (authdata, { rejectWithValue }) => {
     try {
+      console.log(
+        "IN LOGIN ACTION"
+      )
       const response = await fetch(`http://127.0.0.1:5000/login`, {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
+          'Access-Control-Allow-Origin': 'http://localhost:3000'
         },
         body: JSON.stringify(authdata),
       });
       const status = await response.status;
       const resdata = await response.json();
+      console.log("response from login: ", resdata)
       if (status == 200) {
-        console.log(resdata)
         return resdata;
       } else if (status == 202) {
         return rejectWithValue(resdata.data);

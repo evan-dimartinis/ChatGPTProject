@@ -22,7 +22,7 @@ export const getQuicklinks = createAsyncThunk(
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
-          token: token,
+          "token": token,
         },
       });
       const resdata = await response.json()
@@ -33,3 +33,7 @@ export const getQuicklinks = createAsyncThunk(
     }
   }
 );
+
+export const getQuickLinks = createAsyncThunk(
+    ""
+)

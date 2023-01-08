@@ -14,13 +14,13 @@ class QuickLinks():
             )
 
     def get_user_quicklinks(self, userid):
-        sql = "SELECT hmy, slabel, surl FROM quicklinks where bremoved = 0 and huser = %s"
+        sql = "SELECT hmy, slabel, surl FROM quicklinks where bremoved = false and huser = %s"
         record = (userid,)
         try:
             cur = self.conn.cursor()
             cur.execute(sql, record)
             return cur.fetchall()
-        except any as err:
+        except (TypeError, NameError, SyntaxError) as err:
             print(err)
 
     def insert_quicklink(self, userid, label, url):
@@ -31,7 +31,7 @@ class QuickLinks():
             cur.execute(sql, record)
             self.conn.commit()
             return self.get_user_quicklinks(userid)
-        except any as err:
+        except (TypeError, NameError, SyntaxError) as err:
             print(err)
             return False
             

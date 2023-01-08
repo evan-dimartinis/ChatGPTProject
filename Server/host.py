@@ -1,10 +1,10 @@
 from flask import Flask, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import json
 from Queries import auth, quicklinks
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 def to_json(byteobject):
     return json.loads(byteobject.decode(encoding='utf-8', errors='strict'))
@@ -21,11 +21,13 @@ def login_api():
         return "Internal Server Error", 500
 
 @app.route('/autologin', methods=['GET'])
+@cross_origin()
 def autologin():
     try:
         token = request.headers.get('token')
         userid = auth.AuthDB().get_userid_with_token(token)
         if userid > 0:
+            print('sending back a valid autologin')
             return {"valid": True}, 200
         else:
             return {"valid": False}, 200
@@ -35,13 +37,14 @@ def autologin():
 @app.route('/quicklinks', methods=['GET'])
 def get_quicklinks():
     try:
-        userid = auth.AuthDB().get_userid_with_token()
+        token = request.headers.get('token')
+        userid = auth.AuthDB().get_userid_with_token(token)
         if userid == 0:
             return {"error": "Invalid token"}, 401
         else:
             rv = quicklinks.QuickLinks().get_user_quicklinks(userid)
             return {"data": rv}, 200
-    except any as err:
+    except (TypeError, NameError, SyntaxError) as err:
         print(err)
         return "Internal Server Error", 500
 
@@ -55,7 +58,7 @@ def add_quicklink():
             return "Internal Server Error", 500
         else:
             return {"data": rv}, 200
-    except any as err:
+    except (TypeError, NameError, SyntaxError) as err:
         print(err)
         return "Internal Server Error", 500
 

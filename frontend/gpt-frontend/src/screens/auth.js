@@ -29,7 +29,7 @@ export default function Auth(props) {
       });
       navigate("/dashboard");
     }
-    if (cookie.session_token.data !== "") {
+    if (cookie.session_token.data !== "" && cookie.session_token.data !== undefined) {
       dispatch(autologin(cookie.session_token.data));
     }
   }, [dispatch, isAuthenticated]);
