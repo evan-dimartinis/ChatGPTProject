@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { useCookies } from "react-cookie";
 
 export const AuthSlice = createSlice({
   name: "Auth",
@@ -9,13 +8,12 @@ export const AuthSlice = createSlice({
     loginerror: "",
   },
   reducers: {
-    getUserData: (state) => {},
   },
   extraReducers(builder) {
     builder
       .addCase(login.fulfilled, (state, action) => {
-        state.isAuthenticated = true;
         state.session_token = action.payload;
+        state.isAuthenticated = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.loginerror = action.payload;
@@ -30,7 +28,6 @@ export const autologin = createAsyncThunk(
   "Auth/autologin",
   async (token, { rejectWithValue }) => {
     try {
-      console.log(token)
       const response = await fetch(`http://127.0.0.1:5000/autologin`, {
         method: "GET",
         mode: "cors",
@@ -62,6 +59,7 @@ export const login = createAsyncThunk(
       const status = await response.status;
       const resdata = await response.json();
       if (status == 200) {
+        console.log(resdata)
         return resdata;
       } else if (status == 202) {
         return rejectWithValue(resdata.data);
@@ -73,3 +71,7 @@ export const login = createAsyncThunk(
     }
   }
 );
+
+//CREATE EVENT TO DISPATCH THAT CAN BE DISPATCHED FROM ANY SLICE
+//THIS EVENT WILL INDICATE THE TOKEN BEING SENT IS NOT VALID AND THAT THE USER SHOULD BE MARKED NOT AUTHENTICATED
+//THIS WILL TRIGGER THE REROUTE TO AUTH FROM THE DASHBOARD, WHICH IS CONSTANTLY CHECKING ISAUTHENTICATED

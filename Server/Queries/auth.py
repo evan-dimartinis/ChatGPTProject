@@ -51,12 +51,14 @@ class AuthDB():
         cur = self.conn.cursor()
         cur.execute(sql, record)
         results = cur.fetchall()
+        print(results)
         cur.close()
         if len(results) < 1:
             return ('Username or password are incorrect. Please try again', 202)
         else:
             #REGARDLESS WE'RE UPDATING THE TOKEN AND EXPIRATION DATE
             token = secrets.token_urlsafe()
+            print(token)
             self.update_user_token(results[0][0], token)
             self.conn.close()
             print(token)

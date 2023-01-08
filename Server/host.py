@@ -4,7 +4,7 @@ import json
 from Queries import auth, quicklinks
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 def to_json(byteobject):
     return json.loads(byteobject.decode(encoding='utf-8', errors='strict'))
