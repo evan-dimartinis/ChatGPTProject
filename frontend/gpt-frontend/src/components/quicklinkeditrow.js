@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateQuicklink } from "../store/quicklinksSlice";
+import { deleteQuicklink, updateQuicklink } from "../store/quicklinksSlice";
 import '../styles/quicklinks.css'
 
 const QuicklinkEditRow = (props) => {
@@ -19,12 +19,19 @@ const QuicklinkEditRow = (props) => {
         }))
     }
 
+    const deleteLink = () => {
+        dispatch(deleteQuicklink({
+            token: token,
+            hmy: hmy
+        }))
+    }
+
     return (
         <div className="row-container">
             <input type={"text"} className="label-input" value={label} onChange={(e) => setLabel(e.target.value)} />
             <input type={"text"} className="url-input" value={url} onChange={(e) => setUrl(e.target.value)} />
             <button className="quicklink-edit-btn" onClick={updateLink}>Save</button>
-            <button className="quicklink-delete-btn">Delete</button>
+            <button className="quicklink-delete-btn" onClick={deleteLink}>Delete</button>
         </div>
     )
 }

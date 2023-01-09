@@ -45,3 +45,15 @@ class QuickLinks():
             return self.get_user_quicklinks(userid)
         except:
             return False
+
+    def delete_quicklink(self, hmy, userid):
+        sql = "UPDATE quicklinks set bremoved = true where hmy = %s"
+        record = (hmy,)
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, record)
+            self.conn.commit()
+            return self.get_user_quicklinks(userid)
+        except Exception as e:
+            print(e)
+            return False

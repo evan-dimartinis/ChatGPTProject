@@ -23,6 +23,9 @@ export const QuicklinksSlice = createSlice({
       .addCase(updateQuicklink.fulfilled, (state, action) => {
         state.quicklinks = action.payload
       })
+      .addCase(deleteQuicklink.fulfilled, (state, action) => {
+        state.quicklinks = action.payload
+      })
   },
 });
 
@@ -100,5 +103,23 @@ export const updateQuicklink = createAsyncThunk(
 )
 
 export const deleteQuicklink = createAsyncThunk(
-
+  "Quicklinks/deleteQuicklink",
+  async (data) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/deletequicklink`, {
+        method: "DELETE",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          "token": data.token,
+        },
+        body: JSON.stringify({ hmy: data.hmy }),
+      });
+      const resdata = await response.json();
+      console.log(resdata)
+      return resulttojson(resdata.data);
+    } catch (err) {
+      
+    }
+  }
 )

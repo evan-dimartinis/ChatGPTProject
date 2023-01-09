@@ -84,5 +84,21 @@ def update_quicklink():
         print(err)
         return "Internal Server Error", 500
 
+@app.route('/deletequicklink', methods=['DELETE'])
+def delete_quicklink():
+    try:
+        token = request.headers.get('token')
+        userid = auth.AuthDB().get_userid_with_token(token)
+        print(userid)
+        postdata = to_json(request.data)
+        print(postdata)
+        rv = quicklinks.QuickLinks().delete_quicklink(postdata['hmy'], userid)
+        if rv is False:
+            return "Internal Server Error", 500
+        else:
+            return {"data": rv}, 200
+    except:
+        return "Internal Server Error", 500
+
 if __name__ == '__main__':
     app.run()
