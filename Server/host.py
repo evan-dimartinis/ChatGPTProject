@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import json
-from Queries import auth, quicklinks
+from Queries import auth, quicklinks, requests
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
@@ -35,69 +35,45 @@ def autologin():
     except:
         return "Internal Server Error", 500
 
-@app.route('/quicklinks', methods=['GET'])
+@app.route('/quicklinks', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_quicklinks():
     try:
         token = request.headers.get('token')
-        print(token)
         userid = auth.AuthDB().get_userid_with_token(token)
         if userid == 0:
             return {"error": "Invalid token"}, 401
         else:
-            rv = quicklinks.QuickLinks().get_user_quicklinks(userid)
-            return {"data": rv}, 200
+            if request.method == "GET":
+                rv = quicklinks.QuickLinks().get_user_quicklinks(userid)
+            elif request.method == "POST":
+                postdata = to_json(request.data)
+                rv = quicklinks.QuickLinks().insert_quicklink(userid, postdata['label'], postdata['url'])
+            elif request.method == "PUT":
+                postdata = to_json(request.data)
+                rv = quicklinks.QuickLinks().update_quicklink(userid, postdata['hmy'], postdata['label'], postdata['url'])
+            elif request.method == "DELETE":
+                postdata = to_json(request.data)
+                rv = quicklinks.QuickLinks().delete_quicklink(postdata['hmy'], userid)
+            if rv == False:
+                return "Internal Server Error", 500
+            else:
+                return {"data": rv}, 200
     except (TypeError, NameError, SyntaxError) as err:
         print(err)
         return "Internal Server Error", 500
 
-@app.route('/addquicklink', methods=['POST'])
-def add_quicklink():
+@app.route('/request', methods=['PUT', 'GET'])
+def request_func():
     try:
         token = request.headers.get('token')
         userid = auth.AuthDB().get_userid_with_token(token)
-        print(userid)
-        postdata = to_json(request.data)
-        print(postdata)
-        rv = quicklinks.QuickLinks().insert_quicklink(userid, postdata['label'], postdata['url'])
-        if rv is False:
-            return "Internal Server Error", 500
-        else:
-            return {"data": rv}, 200
-    except (TypeError, NameError, SyntaxError) as err:
+        if request.method == "PUT":
+            data = to_json(request.data)
+            return requests.Requests().insert_request(userid, data['label'], data['requesttext'])
+        elif request.method == "GET":
+            return requests.Requests().get_requests(userid)
+    except Exception as err:
         print(err)
-        return "Internal Server Error", 500
-
-@app.route('/updatequicklink', methods=['POST'])
-def update_quicklink():
-    try:
-        token = request.headers.get('token')
-        userid = auth.AuthDB().get_userid_with_token(token)
-        print(userid)
-        postdata = to_json(request.data)
-        print(postdata)
-        rv = quicklinks.QuickLinks().update_quicklink(userid, postdata['hmy'], postdata['label'], postdata['url'])
-        if rv is False:
-            return "Internal Server Error", 500
-        else:
-            return {"data": rv}, 200
-    except (TypeError, NameError, SyntaxError) as err:
-        print(err)
-        return "Internal Server Error", 500
-
-@app.route('/deletequicklink', methods=['DELETE'])
-def delete_quicklink():
-    try:
-        token = request.headers.get('token')
-        userid = auth.AuthDB().get_userid_with_token(token)
-        print(userid)
-        postdata = to_json(request.data)
-        print(postdata)
-        rv = quicklinks.QuickLinks().delete_quicklink(postdata['hmy'], userid)
-        if rv is False:
-            return "Internal Server Error", 500
-        else:
-            return {"data": rv}, 200
-    except:
         return "Internal Server Error", 500
 
 if __name__ == '__main__':

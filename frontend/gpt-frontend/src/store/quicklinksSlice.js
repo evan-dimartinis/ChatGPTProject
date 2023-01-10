@@ -66,7 +66,7 @@ export const addQuicklink = createAsyncThunk(
   "Quicklinks/addQuicklink",
   async (data) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/addquicklink`, {
+      const response = await fetch(`http://127.0.0.1:5000/quicklinks`, {
         method: "POST",
         mode: "cors",
         headers: {
@@ -85,8 +85,8 @@ export const updateQuicklink = createAsyncThunk(
   "Quicklinks/updateQuicklink",
   async (updatedata) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/updatequicklink`, {
-        method: "POST",
+      const response = await fetch(`http://127.0.0.1:5000/quicklinks`, {
+        method: "PUT",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export const deleteQuicklink = createAsyncThunk(
   "Quicklinks/deleteQuicklink",
   async (data) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/deletequicklink`, {
+      const response = await fetch(`http://127.0.0.1:5000/quicklinks`, {
         method: "DELETE",
         mode: "cors",
         headers: {
