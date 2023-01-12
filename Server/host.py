@@ -62,16 +62,27 @@ def get_quicklinks():
         print(err)
         return "Internal Server Error", 500
 
-@app.route('/request', methods=['PUT', 'GET'])
+@app.route('/request', methods=['PUT', 'GET', 'POST', 'DELETE'])
 def request_func():
     try:
         token = request.headers.get('token')
         userid = auth.AuthDB().get_userid_with_token(token)
+        print(userid)
         if request.method == "PUT":
             data = to_json(request.data)
-            return requests.Requests().insert_request(userid, data['label'], data['requesttext'])
+            rv = requests.Requests().insert_request(userid, data['label'], data['requesttext'])
         elif request.method == "GET":
-            return requests.Requests().get_requests(userid)
+            rv = requests.Requests().get_requests(userid)
+        elif request.method == "POST":
+            data = to_json(request.data)
+            rv = requests.Requests().insert_request(userid, data['label'], data['requesttext'])
+        elif request.method == "DELETE":
+            data = to_json(request.data)
+            rv = requests.Requests().delete_request(userid, data['hmy'])
+        if rv == False or len(rv) == 0:
+            return "Internal Server Error", 500
+        else:
+            return {"data", rv}, 200
     except Exception as err:
         print(err)
         return "Internal Server Error", 500

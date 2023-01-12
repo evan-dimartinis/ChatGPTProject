@@ -19,6 +19,7 @@ class Requests():
         try:
             cur = self.conn.cursor()
             cur.execute(sql, record)
+            self.conn.commit()
             return self.get_requests(userid)
         except Exception as err:
             print(err)
@@ -31,6 +32,30 @@ class Requests():
             cur = self.conn.cursor()
             cur.execute(sql, record)
             return cur.fetchall()
+        except Exception as err:
+            print(err)
+            return False
+
+    def update_request(self, userid, hmy, label, req):
+        sql = "UPDATE requests set slabel = %s, srequest = %s where hmy = %s"
+        record = (label, req, hmy)
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, record)
+            self.conn.commit()
+            return self.get_requests(userid)
+        except Exception as err:
+            print(err)
+            return False
+
+    def delete_request(self, userid, hmy):
+        sql = "UPDATE requests set bremoved = true where hmy = %s"
+        record = (hmy, )
+        try:
+            cur = self.conn.cursor()
+            cur.execute(sql, record)
+            self.conn.commit()
+            return self.get_requests(userid)
         except Exception as err:
             print(err)
             return False

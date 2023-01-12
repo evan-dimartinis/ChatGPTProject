@@ -5,6 +5,7 @@ import "../styles/dashboard.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getQuicklinks } from "../store/quicklinksSlice";
+import { getRequests } from "../store/requestsSlice";
 
 const Dashboard = (props) => {
   const navigate = useNavigate();
@@ -20,8 +21,8 @@ const Dashboard = (props) => {
       navigate("/");
     } else {
       dispatch(getQuicklinks(token));
+      dispatch(getRequests(token))
     }
-    
   }, []);
 
   return (
