@@ -1,0 +1,22 @@
+@keyframes slidein {
+  from {
+    width: 0vw;
+  }
+
+  to {
+    width: 10vw;
+  }
+}
+
+.request-bar-div {
+  height: 100%;
+  background-color: white;
+}
+
+.active {
+  width: 10vw;
+}
+
+.inactive {
+  width: 0vw;
+}

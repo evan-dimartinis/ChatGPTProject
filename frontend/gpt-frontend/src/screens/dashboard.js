@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getQuicklinks } from "../store/quicklinksSlice";
 import { getRequests } from "../store/requestsSlice";
+import RequestBar from "../components/requestbar";
+import Body from "../components/body";
 
 const Dashboard = (props) => {
   const navigate = useNavigate();
@@ -58,6 +60,11 @@ const Dashboard = (props) => {
         isOpen={isEditLinks}
         closeModal={() => setIsEditLinks(false)}
       />
+      <div className="dashboard-body-container">
+        <RequestBar />
+        <Body />
+      </div>
+      
     </div>
   );
 };
