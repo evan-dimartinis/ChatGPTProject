@@ -18,9 +18,9 @@
 
 .request-bar-div {
   display: flex;
-  height: 100%;
+  height: fit-content;
   width: 15%;
-  background-color: blue;
+  background-color: rgb(103, 118, 214);
 }
 
 .active {

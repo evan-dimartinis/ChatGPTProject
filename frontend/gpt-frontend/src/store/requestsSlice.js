@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-export const QuicklinksSlice = createSlice({
+export const RequestsSlice = createSlice({
   name: "Requests",
   initialState: {
     requests: [],
   },
   reducers: {},
   extraReducers(builder) {
-    builder.addCase();
+    builder.addCase(getRequests.fulfilled, (state, action) => {
+      
+    });
   },
 });
 

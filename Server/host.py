@@ -79,12 +79,11 @@ def request_func():
         elif request.method == "DELETE":
             data = to_json(request.data)
             rv = requests.Requests().delete_request(userid, data['hmy'])
-        if rv == False or len(rv) == 0:
+        if rv == False:
             return "Internal Server Error", 500
         else:
-            return {"data", rv}, 200
+            return {"data": rv}, 200
     except Exception as err:
-        print(err)
         return "Internal Server Error", 500
 
 if __name__ == '__main__':
