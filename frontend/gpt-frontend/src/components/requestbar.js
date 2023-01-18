@@ -1,11 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "../styles/requestbar.css"
 
 const RequestBar = (props) => {
-
-
     return (
-        <div className='request-bar-div'>
+        <div className={props.show ? "request-bar-div active" : "request-bar-div inactive"}>
 
         </div>
     )

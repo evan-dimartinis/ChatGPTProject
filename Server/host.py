@@ -21,7 +21,7 @@ def login_api():
         return "Internal Server Error", 500
 
 @app.route('/autologin', methods=['GET'])
-@cross_origin()
+#@cross_origin()
 def autologin():
     try:
         token = request.headers.get('token')
