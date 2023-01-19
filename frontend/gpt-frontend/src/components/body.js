@@ -10,7 +10,7 @@ const Body = (props) => {
     return (
         <div className="body-container">
             <RequestBar show={showRequestBar} />
-            <button onClick={() => setShowRequestBar(!showRequestBar)} className="request-bar-toggle-btn">Open drawer</button>
+            <button onClick={() => props.addRequest()/* setShowRequestBar(!showRequestBar) */} className="request-bar-toggle-btn">Open drawer</button>
         </div>
     )
 }

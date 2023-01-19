@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { getQuicklinks } from "../store/quicklinksSlice";
 import { getRequests } from "../store/requestsSlice";
 import Body from "../components/body";
+import AddRequestModal from "../components/addrequestmodal";
 
 const Dashboard = (props) => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Dashboard = (props) => {
   const isAuth = useSelector((state) => state.Auth.isAuthenticated);
   const token = useSelector((state) => state.Auth.session_token);
   const links = useSelector((state) => state.Quicklinks.quicklinks);
+  const [showAddRequest, setShowAddRequest] = useState(false);
 
   useEffect(() => {
     if (!isAuth) {
@@ -55,14 +57,14 @@ const Dashboard = (props) => {
           Edit
         </button>
       </div>
+      <div className="dashboard-body-container">
+        <Body addRequest={() => setShowAddRequest(true)} />
+      </div>
       <EditLinkModal
         isOpen={isEditLinks}
         closeModal={() => setIsEditLinks(false)}
       />
-      <div className="dashboard-body-container">
-        <Body />
-      </div>
-      
+      <AddRequestModal isOpen={showAddRequest} closeModal={() => setShowAddRequest(false)} />
     </div>
   );
 };
