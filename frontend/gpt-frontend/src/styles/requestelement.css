@@ -1,0 +1,12 @@
+.element-container {
+    width: 100%;
+    background-color: aqua;
+    height: 8vh;
+    border-bottom: 1px white solid;
+    align-items: center;
+    justify-content: center;
+}
+
+p {
+    overflow: hidden;
+}

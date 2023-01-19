@@ -18,6 +18,7 @@
 
 .request-bar-div {
   display: flex;
+  flex-direction: column;
   height: fit-content;
   width: 15%;
   background-color: rgb(103, 118, 214);
@@ -29,4 +30,21 @@
 
 .inactive {
   animation: hidebar 200ms ease-in 0ms 1 both;
+}
+
+.add-request-btn {
+  width: 100%;
+  border: none;
+  height: 8vh;
+  background-color: aqua;
+}
+
+.inactive-btn {
+  display: none;
+}
+
+.add-request-div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }

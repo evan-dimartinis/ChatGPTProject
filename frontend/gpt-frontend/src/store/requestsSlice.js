@@ -8,7 +8,7 @@ export const RequestsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(getRequests.fulfilled, (state, action) => {
-      
+      state.requests = action.payload
     });
   },
 });
@@ -38,7 +38,6 @@ export const getRequests = createAsyncThunk(
         },
       });
       const resdata = await response.json();
-      console.log(resdata);
       return resdata.data !== undefined ? resulttojson(resdata.data) : [];
     } catch (err) {
       console.log(err);
